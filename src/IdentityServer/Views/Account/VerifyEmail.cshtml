@@ -1,0 +1,24 @@
+﻿@model IdentityServer.Public.Account.VerifyEmailViewModel
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+<div class="row">
+    <div class="col-sm-12">
+        @if (Model.ConfirmResult)
+        {
+        <div class="alert alert-success" role="alert">
+            @Model.Message
+            <br />@Localizer["Now you can login with your account!"]
+        </div>
+        }
+        else
+        {
+            <div class="alert alert-danger" role="alert">
+                @Model.Message
+            </div>
+        }
+
+        <div class="col-md-12">
+            <div><center><a href="/account/login" class="text-tripbricks">@Localizer["Login here!"]</a></center></div><br />
+        </div>
+    </div>
+</div>

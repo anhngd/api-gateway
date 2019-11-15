@@ -1,0 +1,54 @@
+using System.Threading;
+using System.Threading.Tasks;
+using IdentityServer.Constants;
+using IdentityServer.Models;
+using IdentityService.ViewModels.UserViewModels;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+
+namespace IdentityService.Commands.UserCommands
+{
+    public class PutLockUserCommand : IPutLockUserCommand
+    {
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        public PutLockUserCommand(UserManager<ApplicationUser> userManager)
+        {
+            _userManager = userManager;
+        }
+
+        public async Task<IActionResult> ExecuteAsync(string id, LockRequestUser model, CancellationToken cancellationToken)
+        {
+            // check null argument
+            if (model.End == null)
+                return new BadRequestObjectResult("ArgumentNullException: Value cannot be null.");
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return new NotFoundObjectResult("User does not exist.");
+            }
+            // prevent lock root account
+            if (await _userManager.IsInRoleAsync(user, RoleNames.Root))
+            {
+                return new BadRequestObjectResult("ERR_LOCK_ROOT: Lock root does not allowed.");
+            }
+
+            // lock user
+            user.LockoutEnabled = true;
+            if (model?.End == null)
+            {
+                user.LockoutEnd = null;
+            }
+            else
+            {
+                var dtUtc = model.End.Value.ToUniversalTime();
+                user.LockoutEnd = dtUtc;
+            }
+
+            await _userManager.UpdateAsync(user);
+            
+            return new OkObjectResult("Lock account success!");
+        }
+    }
+}
