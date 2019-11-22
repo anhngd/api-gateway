@@ -1,13 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <AssemblyName>ApiGateway</AssemblyName>
+    <RootNamespace>ApiGateway</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ocelot" Version="13.8.0" />
-    <PackageReference Include="Ocelot.Administration" Version="13.8.0" />
-    <PackageReference Include="Ocelot.Provider.Consul" Version="13.8.0" />
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Ocelot" Version="13.5.2" />
+    <PackageReference Include="Ocelot.Administration" Version="13.5.2" />
+    <PackageReference Include="Ocelot.Provider.Consul" Version="13.5.2" />
   </ItemGroup>
 
 </Project>

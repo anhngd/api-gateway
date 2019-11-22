@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Ocelot.Administration;
 using Ocelot.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace ApiGateway
 {
@@ -20,10 +21,8 @@ namespace ApiGateway
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //  services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddRazorPages();
-
-            //  const string authenticationProviderKey = "IdentityApiKey";
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            const string authenticationProviderKey = "IdentityApiKey";
 
             services.AddCors(options =>
             {
@@ -33,36 +32,36 @@ namespace ApiGateway
                                     .AllowAnyHeader()
                                     .AllowCredentials());
             });
-            //services.AddAuthentication()
-            //    .AddJwtBearer(authenticationProviderKey, x =>
-            //    {
-            //        x.Authority = Configuration.GetSection("ApiAuthentication").GetSection("Authority").Value;
-            //        //  x = Configuration.GetSection("ApiAuthentication").GetSection("ApiName").Value;
-            //        x.RequireHttpsMetadata = bool.Parse(Configuration.GetSection("ApiAuthentication").GetSection("RequireHttpsMetadata").Value);
-            //        x.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
-            //        {
-            //            ValidAudiences = new[] { "identity", "catalog", "hotel", "booking" }
-            //        };
-            //        x.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents()
-            //        {
-            //            OnAuthenticationFailed = async ctx =>
-            //            {
-            //                var i = 0;
-            //            },
-            //            OnTokenValidated = async ctx =>
-            //            {
+            services.AddAuthentication()
+                .AddJwtBearer(authenticationProviderKey, x =>
+                {
+                    x.Authority = Configuration.GetSection("ApiAuthentication").GetSection("Authority").Value;
+                    //  x = Configuration.GetSection("ApiAuthentication").GetSection("ApiName").Value;
+                    x.RequireHttpsMetadata = bool.Parse(Configuration.GetSection("ApiAuthentication").GetSection("RequireHttpsMetadata").Value);
+                    x.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+                    {
+                        ValidAudiences = new[] { "identity", "catalog", "hotel", "booking" }
+                    };
+                    x.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents()
+                    {
+                        OnAuthenticationFailed = async ctx =>
+                        {
+                            var i = 0;
+                        },
+                        OnTokenValidated = async ctx =>
+                        {
 
-            //            },
-            //            OnMessageReceived = async ctx => Console.WriteLine("-----------------------------------------")
-            //        };
-            //    });
+                        },
+                        OnMessageReceived = async ctx => Console.WriteLine("-----------------------------------------")
+                    };
+                });
             services
                 .AddOcelot()
                 .AddAdministration("/administration", "secret");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -75,13 +74,7 @@ namespace ApiGateway
             }
 
             app.UseHttpsRedirection();
-            //  app.UseMvc();
-            app.UseRouting();
-            app.UseAuthorization();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapRazorPages();
-            });
+            app.UseMvc();
         }
     }
 }
