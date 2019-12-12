@@ -5,6 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Ocelot.Administration;
 using Ocelot.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using IdentityServer4.AccessTokenValidation;
+using System;
 
 namespace ApiGateway
 {
@@ -33,29 +35,6 @@ namespace ApiGateway
                                     .AllowAnyHeader()
                                     .AllowCredentials());
             });
-            //services.AddAuthentication()
-            //    .AddJwtBearer(authenticationProviderKey, x =>
-            //    {
-            //        x.Authority = Configuration.GetSection("ApiAuthentication").GetSection("Authority").Value;
-            //        //  x = Configuration.GetSection("ApiAuthentication").GetSection("ApiName").Value;
-            //        x.RequireHttpsMetadata = bool.Parse(Configuration.GetSection("ApiAuthentication").GetSection("RequireHttpsMetadata").Value);
-            //        x.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
-            //        {
-            //            ValidAudiences = new[] { "identity", "catalog", "hotel", "booking" }
-            //        };
-            //        x.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents()
-            //        {
-            //            OnAuthenticationFailed = async ctx =>
-            //            {
-            //                var i = 0;
-            //            },
-            //            OnTokenValidated = async ctx =>
-            //            {
-
-            //            },
-            //            OnMessageReceived = async ctx => Console.WriteLine("-----------------------------------------")
-            //        };
-            //    });
             services
                 .AddOcelot()
                 .AddAdministration("/administration", "secret");
